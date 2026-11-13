@@ -30,11 +30,20 @@ jobs:
           node-version-file: ".nvmrc"
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build
       - uses: actions/configure-pages@v5
+      - name: Build app
+        run: pnpm build
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/app/
+      - name: Assemble Pages artifact
+        run: |
+          mkdir -p _site/app _site/workshop
+          cp -R docs/. _site/
+          cp -R dist/. _site/app/
+          cp -R workshop/. _site/workshop/
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          path: _site
 
   deploy:
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
