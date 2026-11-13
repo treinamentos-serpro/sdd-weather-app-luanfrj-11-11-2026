@@ -5,7 +5,6 @@ interface UnitToggleProps {
   onChange: (unit: Unit) => void;
 }
 
-/** Alternador de unidade Celsius/Fahrenheit, acessível por teclado. */
 export default function UnitToggle({ unit, onChange }: UnitToggleProps) {
   return (
     <div
@@ -13,26 +12,21 @@ export default function UnitToggle({ unit, onChange }: UnitToggleProps) {
       aria-label="Unidade de temperatura"
       className="inline-flex rounded-lg border border-white/10 bg-white/5 p-1 backdrop-blur-md"
     >
-      <button
-        type="button"
-        aria-pressed={unit === 'celsius'}
-        onClick={() => onChange('celsius')}
-        className={`rounded-md px-3 py-1 text-sm font-semibold transition ${
-          unit === 'celsius' ? 'bg-accent-500 text-white' : 'text-white/60 hover:text-white'
-        }`}
-      >
-        °C
-      </button>
-      <button
-        type="button"
-        aria-pressed={unit === 'fahrenheit'}
-        onClick={() => onChange('fahrenheit')}
-        className={`rounded-md px-3 py-1 text-sm font-semibold transition ${
-          unit === 'fahrenheit' ? 'bg-accent-500 text-white' : 'text-white/60 hover:text-white'
-        }`}
-      >
-        °F
-      </button>
+      {(['celsius', 'fahrenheit'] as const).map((option) => (
+        <button
+          key={option}
+          type="button"
+          aria-pressed={unit === option}
+          onClick={() => onChange(option)}
+          className={`min-h-10 min-w-12 rounded-md px-3 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400 ${
+            unit === option
+              ? 'bg-accent-500 text-night-900'
+              : 'text-white hover:bg-white/10'
+          }`}
+        >
+          {option === 'celsius' ? '°C' : '°F'}
+        </button>
+      ))}
     </div>
   );
 }

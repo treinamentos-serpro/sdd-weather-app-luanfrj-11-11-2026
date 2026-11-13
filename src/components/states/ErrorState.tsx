@@ -1,20 +1,20 @@
 interface ErrorStateProps {
   message: string;
   onRetry: () => void;
+  disabled?: boolean;
 }
 
-/** Estado de erro com ação de "tentar novamente". */
-export default function ErrorState({ message, onRetry }: ErrorStateProps) {
+export default function ErrorState({ message, onRetry, disabled = false }: ErrorStateProps) {
   return (
-    <div role="alert" className="flex flex-col items-center gap-4 py-16 text-center">
-      <span aria-hidden="true" className="text-4xl">
-        ⚠️
-      </span>
-      <p className="text-white/80">{message}</p>
+    <div className="space-y-4 text-white">
+      <p role="alert" className="text-red-300">
+        {message}
+      </p>
       <button
         type="button"
         onClick={onRetry}
-        className="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-600"
+        disabled={disabled}
+        className="rounded-md bg-accent-500 px-5 py-2 font-medium text-night-900 enabled:hover:bg-accent-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Tentar novamente
       </button>

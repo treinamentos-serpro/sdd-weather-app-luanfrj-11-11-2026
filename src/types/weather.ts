@@ -1,47 +1,64 @@
-/**
- * Contratos de domínio compartilhados do Weather App.
- *
- * Decisão de arquitetura: as temperaturas são sempre armazenadas em Celsius
- * internamente e convertidas apenas na camada de apresentação. Assim, a troca
- * de unidade (C/F) nunca dispara um novo request.
- */
+export type TemperatureUnit = 'celsius' | 'fahrenheit';
+export type Unit = TemperatureUnit;
 
-export type Unit = 'celsius' | 'fahrenheit';
-
-/** Resultado da API de geocoding (uma cidade). */
 export interface City {
-  id: number;
+  id?: number;
   name: string;
   country: string;
-  /** Estado/região, quando disponível (ajuda a desambiguar homônimos). */
-  admin1?: string;
+  region?: string;
   latitude: number;
   longitude: number;
 }
 
-/** Condições atuais. Temperatura sempre em °C. */
-export interface CurrentWeather {
-  temperature: number;
-  weatherCode: number;
-  humidity: number;
-  windSpeed: number;
-  pressure: number;
-  precipitation: number;
+export interface CurrentConditions {
   time: string;
+  temperatureC: number | null;
+  apparentTemperatureC: number | null;
+  relativeHumidity: number | null;
+  dewPointC: number | null;
+  pressureHpa: number | null;
+  windSpeedKmh: number | null;
+  windDirectionDegrees: number | null;
+  windGustsKmh: number | null;
+  precipitationMm: number | null;
+  cloudCoverPercent: number | null;
+  uvIndex: number | null;
+  visibilityKm: number | null;
+  weatherCode: number | null;
 }
 
-/** Um dia da previsão. Temperaturas sempre em °C. */
-export interface ForecastDay {
+export type CurrentWeather = CurrentConditions;
+
+export interface DailyForecast {
   date: string;
-  min: number;
-  max: number;
-  weatherCode: number;
-  precipitationProbability: number;
+  temperatureMinC: number | null;
+  temperatureMaxC: number | null;
+  weatherCode: number | null;
+  precipitationProbabilityMaxPercent: number | null;
+  precipitationSumMm: number | null;
+  windSpeedMaxKmh: number | null;
+  windGustsMaxKmh: number | null;
+  windDirectionDominantDegrees: number | null;
+  uvIndexMax: number | null;
+  sunrise: string | null;
+  sunset: string | null;
 }
 
-/** Agregado entregue à UI: cidade + clima atual + 5 dias de previsão. */
+export type ForecastDay = DailyForecast;
+
+export interface HourlyForecast {
+  time: string;
+  temperatureC: number | null;
+  precipitationProbabilityPercent: number | null;
+  precipitationMm: number | null;
+  windSpeedKmh: number | null;
+  weatherCode: number | null;
+}
+
 export interface WeatherData {
   city: City;
-  current: CurrentWeather;
-  forecast: ForecastDay[];
+  timezone: string;
+  current: CurrentConditions | null;
+  daily: DailyForecast[] | null;
+  hourly: HourlyForecast[] | null;
 }
