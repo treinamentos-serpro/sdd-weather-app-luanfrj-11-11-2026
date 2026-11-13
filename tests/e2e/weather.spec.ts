@@ -68,3 +68,32 @@ test('busca uma cidade e converte a temperatura para Fahrenheit', async ({ page 
   await page.getByRole('button', { name: '°F' }).click();
   await expect(currentWeather.getByText('32 °F', { exact: true })).toBeVisible();
 });
+
+test('mostra estado vazio quando o geocoding não retorna results', async ({ page }) => {
+  await page.route('https://geocoding-api.open-meteo.com/v1/search?*', async (route) => {
+    await route.fulfill({ json: {} });
+  });
+
+  await page.goto('/');
+  await page.getByRole('searchbox', { name: 'Cidade' }).fill('Cidade inexistente');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Nenhuma cidade encontrada.' })).toBeVisible();
+});
+
+test('mostra o clima após a busca em viewport mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await mockWeatherRequests(page);
+
+  await page.goto('/');
+  await page.getByRole('searchbox', { name: 'Cidade' }).fill('São Paulo');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+
+  const currentWeather = page.getByRole('region', { name: 'Condições atuais' });
+  await expect(currentWeather.getByRole('heading', { name: 'São Paulo' })).toBeVisible();
+  await expect(currentWeather.getByText('0 °C', { exact: true })).toBeVisible();
+
+  const forecast = page.getByRole('region', { name: 'Previsão para 5 dias' });
+  await expect(forecast).toBeVisible();
+  await expect(forecast.getByRole('article')).toHaveCount(5);
+});

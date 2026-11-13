@@ -17,7 +17,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   projects: [
-    { name: 'mobile', use: { ...devices['iPhone 13'] } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
   webServer: {
     command: 'pnpm dev --host localhost --port 4179 --strictPort',
